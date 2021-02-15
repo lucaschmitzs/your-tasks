@@ -1,2 +1,2 @@
 FLASK_APP=your_tasks
-FLAKS_ENV=development
+FLASK_ENV=development

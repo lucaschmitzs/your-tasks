@@ -22,3 +22,11 @@ def dashboard():
 @login_required
 def update_user():
     return render_template('update_user.html')
+
+
+@main.route('/reset/')
+def reset():
+    if 'logged_in' in session:
+        return redirect('/dashboard/')
+    else:
+        return render_template('reset.html')

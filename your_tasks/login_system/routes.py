@@ -22,3 +22,8 @@ def login():
 @user.route('/user/update/', methods=['POST'])
 def update():
     return User().update()
+
+
+@user.route('/user/reset/', methods=['POST'])
+def reset():
+    return User().reset()

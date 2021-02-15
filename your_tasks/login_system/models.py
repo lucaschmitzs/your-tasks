@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session, redirect
+from flask import jsonify, request, session, redirect
 from passlib.hash import pbkdf2_sha256
 from .collection import collection
 import uuid
@@ -65,7 +65,6 @@ class User:
         updated_user['password'] = pbkdf2_sha256.encrypt(
             updated_user['password'])
 
-
         if user_loggedin['email'] != updated_user['email']:
             if collection.find_one({"email": updated_user['email']}):
                 return jsonify({"error": "Email already in use"}), 400
@@ -74,9 +73,37 @@ class User:
                 return jsonify({"error": "Username already in use"}), 400
 
         if collection.find_one_and_update({"username": user_loggedin['username']},
-                                     {'$set': {'name': updated_user['name'],
-                                               'username': updated_user['username'],
-                                               'email': updated_user['email']}}):
+                                          {'$set': {'name': updated_user['name'],
+                                                    'username': updated_user['username'],
+                                                    'email': updated_user['email'],
+                                                    'password': updated_user['password']}}):
             return self.start_session(updated_user)
 
         return jsonify({"error": "Update failed"}), 401
+
+    def reset(self):
+        user = collection.find_one({
+            "email": request.form.get('email')
+        })
+
+        if not user:
+            return jsonify({"error": "Email not found"})
+
+        else:
+            reset_user = {
+                "username": request.form.get('username'),
+                "password": request.form.get('password')
+            }
+
+            reset_user['password'] = pbkdf2_sha256.encrypt(
+                reset_user['password'])
+
+            if user['username'] != reset_user['username']:
+                if collection.find_one({"username": reset_user['username']}):
+                    return jsonify({"error": "Username already in use"}), 400
+
+            collection.find_one_and_update({"email": user['email']},
+                                           {'$set': {'username': reset_user['username'],
+                                                     'password': reset_user['password']}})
+
+        return jsonify({"error": "Reset failed"}), 401
