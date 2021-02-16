@@ -27,4 +27,3 @@ def update():
 @user.route('/user/reset/', methods=['POST'])
 def reset():
     return User().reset()
-    
