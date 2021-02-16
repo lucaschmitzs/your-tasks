@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, session
-from .helpers import login_required
+
 
 main = Blueprint('main', __name__)
 
@@ -13,15 +13,19 @@ def home():
 
 
 @main.route('/dashboard/')
-@login_required
 def dashboard():
-    return render_template('dashboard.html')
+    if 'logged_in' in session:
+        return render_template('dashboard.html')
+    else:
+        return redirect('/')
 
 
 @main.route('/update_user/')
-@login_required
 def update_user():
-    return render_template('update_user.html')
+    if 'logged_in' in session:
+        return render_template('update_user.html')
+    else:
+        return redirect('/')
 
 
 @main.route('/reset/')

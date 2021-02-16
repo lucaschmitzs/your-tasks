@@ -9,9 +9,9 @@ def signup():
     return User().signup()
 
 
-@user.route('/user/signout/')
-def signout():
-    return User().signout()
+@user.route('/user/logout/')
+def logout():
+    return User().logout()
 
 
 @user.route('/user/login/', methods=['POST'])
