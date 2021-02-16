@@ -24,7 +24,14 @@ class Api():
         username = request.json['username']
         email = request.json['email']
         password = request.json['password']
-        if name and username and email and password and request.method == 'POST':
+
+        if collection.find_one({'username': username}):
+            return jsonify({"error": "Username already in use"}), 400
+
+        if collection.find_one({'email': email}):
+            return jsonify({"error": "Email already in use"}), 400
+            
+        elif name and username and email and password and request.method == 'POST':
             password = pbkdf2_sha256.encrypt(password)
             collection.insert({'_id': id,
                                'name': name,
@@ -36,7 +43,32 @@ class Api():
             return jsonify({'error': 'incorrect parameters'}), 400
 
     def put(self, id):
-        pass
+        user = collection.find_one({'_id': id})
+        parameters = ['name', 'username', 'email', 'password']
+        user_update = {}
+
+        for params in parameters:
+            if params in request.json:
+                user_update.setdefault(params, request.json[f'{params}'])
+                if params == 'username':
+                    if user['username'] != request.json['username']:
+                        if collection.find_one({'username': request.json['username']}):
+                            return jsonify({"error": "Username already in use"}), 400
+                if params == 'email':
+                    if user['email'] != request.json['email']:
+                        if collection.find_one({'email': request.json['email']}):
+                            return jsonify({"error": "Email already in use"}), 400
+                if params == 'password':
+                    user_update.update({'password': pbkdf2_sha256.encrypt(request.json['password'])})
+
+        for key, value in user_update.items():
+            collection.update_one({'_id': id},
+                                      {'$set': {key: value}})
+
+        return jsonify({'success': 'user updated'}), 200
 
     def delete(self, id):
-        pass
+        if collection.delete_one({'_id': id}):
+            return jsonify({'success': 'user deleted'}), 200
+        else:
+            return jsonify({'error': 'id not found'}), 404
