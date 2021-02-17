@@ -4,8 +4,6 @@ from .collection import collection
 import uuid
 
 
-
-
 class User:
 
     def start_session(self, user):
@@ -50,11 +48,11 @@ class User:
 
     def login(self):
         """ Function responsible to log in the user when the account is already setup """
-        
+
         user = collection.find_one({
             "username": request.form.get('username')
         })
-        
+
         # Password validation for log in parameters
         if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
             return self.start_session(user)
@@ -86,7 +84,7 @@ class User:
             if collection.find_one({"email": updated_user['email']}):
                 return jsonify({"error": "Email already in use"}), 400
 
-        # Validate only if the username already exists in the database when the new username and the current username differ                
+        # Validate only if the username already exists in the database when the new username and the current username differ
         if user_loggedin['username'] != updated_user['username']:
             if collection.find_one({"username": updated_user['username']}):
                 return jsonify({"error": "Username already in use"}), 400
@@ -99,11 +97,11 @@ class User:
                                                     'password': updated_user['password']}}):
             return self.start_session(updated_user)
 
-        return jsonify({"error": "Update failed"}), 401
+        return jsonify({"error": "Update failed"}), 400
 
     def reset(self):
         """ Function responsible when the user wants reset some information when forgot the credentials """
-        
+
         # Find the user using the email from the form
         user = collection.find_one({
             "email": request.form.get('email')
@@ -111,9 +109,9 @@ class User:
 
         # If the email dosen't exists, then return a error
         if not user:
-            return jsonify({"error": "Email not found"}), 400
+            return jsonify({"error": "Email not found"}), 404
 
-        # If email exists, obtain the rest of the user information on the form  
+        # If email exists, obtain the rest of the user information on the form
         else:
             reset_user = {
                 "username": request.form.get('username'),
@@ -122,8 +120,8 @@ class User:
 
             reset_user['password'] = pbkdf2_sha256.encrypt(
                 reset_user['password'])
-            
-            # Validate only if the username already exists in the database when the new username and the current username differ 
+
+            # Validate only if the username already exists in the database when the new username and the current username differ
             if user['username'] != reset_user['username']:
                 if collection.find_one({"username": reset_user['username']}):
                     return jsonify({"error": "Username already in use"}), 400

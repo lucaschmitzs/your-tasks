@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from bson.json_util import dumps
 from passlib.hash import pbkdf2_sha256
-from your_tasks.login_system.collection import collection
+from login_system.users.collection import collection
 import uuid
 
 
@@ -40,9 +40,9 @@ class Api():
                                'password': password})
             return jsonify({'success': 'user added'}), 200
         else:
-            return jsonify({'error': 'incorrect parameters'}), 400
+            return jsonify({'error': 'Incorrect parameters'}), 400
 
-    def put(self, id):
+    def patch(self, id):
         user = collection.find_one({'_id': id})
         parameters = ['name', 'username', 'email', 'password']
         user_update = {}

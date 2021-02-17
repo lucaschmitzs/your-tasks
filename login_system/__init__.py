@@ -1,5 +1,5 @@
 from flask import Flask
-from .login_system.routes import user
+from .users.routes import user
 from .routes import main
 from .api.routes import api
 import os

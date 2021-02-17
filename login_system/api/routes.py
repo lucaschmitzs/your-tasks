@@ -1,4 +1,3 @@
-
 from flask import Flask, Blueprint
 from .models import Api
 
@@ -10,7 +9,7 @@ api = Blueprint('api', __name__, url_prefix='/api/')
 def get_all():
     return Api().get_all()
 
-z
+
 @api.route('/<string:id>', methods=['GET'])
 def get(id):
     return Api().get(id)
@@ -21,9 +20,9 @@ def post():
     return Api().post()
 
 
-@api.route('/<string:id>', methods=['PUT'])
-def put(id):
-    return Api().put(id)
+@api.route('/<string:id>', methods=['PATCH'])
+def patch(id):
+    return Api().patch(id)
 
 
 @api.route('/<string:id>', methods=['DELETE'])

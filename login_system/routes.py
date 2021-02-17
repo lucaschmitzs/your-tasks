@@ -1,3 +1,5 @@
+# Code responsible for the main routes of the WebApp
+
 from flask import Blueprint, render_template, redirect, session
 
 
