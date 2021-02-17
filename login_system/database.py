@@ -3,5 +3,5 @@
 
 import pymongo
 
-client = pymongo.MongoClient('localhost', 27017)
-db = client.your_tasks
+client = pymongo.MongoClient('mongodb://mongodb:27017/')
+db = client.login_system

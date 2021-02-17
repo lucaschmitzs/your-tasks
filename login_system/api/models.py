@@ -22,30 +22,35 @@ class Api():
 
     def post(self):
         """ Function responsible to create a new user, with all the parameters being requires """
-        id = uuid.uuid4().hex
-        name = request.json['name']
-        username = request.json['username']
-        email = request.json['email']
-        password = request.json['password']
-
-        # Check for existing email addres and username
-        if collection.find_one({'username': username}):
-            return jsonify({"error": "Username already in use"}), 400
-
-        elif collection.find_one({'email': email}):
-            return jsonify({"error": "Email already in use"}), 400
+        try:
+            id = uuid.uuid4().hex
+            name = request.json['name']
+            username = request.json['username']
+            email = request.json['email']
+            password = request.json['password']
+        except:
+            return jsonify({'error': 'Incorrect parameters'}), 400
 
         # Chek if all the parameters are in the request
-        elif name and username and email and password and request.method == 'POST':
+        if name and username and email and password and request.method == 'POST':
+            
+            # Check for existing email addres and username
+            if collection.find_one({'username': username}):
+                return jsonify({"error": "Username already in use"}), 400
+
+            if collection.find_one({'email': email}):
+                return jsonify({"error": "Email already in use"}), 400            
+
             password = pbkdf2_sha256.encrypt(password)
             collection.insert({'_id': id,
                                'name': name,
                                'username': username,
                                'email': email,
-                               'password': password})
+                               'password': password})   
+
             return jsonify({'success': 'user added'}), 200
-        else:
-            return jsonify({'error': 'Incorrect parameters'}), 400
+        
+        return jsonify({'error': 'Incorrect parameters'}), 400
 
     def patch(self, id):
         """ Function responsible for update the user, not being required all the parameters """
