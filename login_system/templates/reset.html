@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card-wrapper">
+
+    <div class="card">
+        <h1 class="center">Reset your password and username</h1>
+        <form name="reset_form">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="field" required>
+
+            <label for="name">Username</label>
+            <input type="text" name="username" class="field" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" class="field" required>
+
+            <p class="error error--hidden"></p>
+
+            <input type="submit" value="Reset" class="btn">
+            <div class="center">
+                <a class="btn btn--secondary" href="{{ url_for('main.home') }}">Voltar</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
